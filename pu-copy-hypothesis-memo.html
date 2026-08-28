@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PU文言仮説メモ</title>
+  <style>
+    :root {
+      --bg: #eef1f7;
+      --surface: #ffffff;
+      --surface-2: #f5f7fb;
+      --ink: #12182b;
+      --ink-soft: #47536b;
+      --muted: #6b7690;
+      --muted-soft: #98a2b8;
+      --border: #e1e6f0;
+      --border-soft: #edf0f7;
+      --shadow: rgba(23, 30, 55, 0.06);
+
+      --accent: #3457d5;
+      --accent-bg: #eaefff;
+
+      --c-green: #128a63;
+      --c-green-bg: #e6f6ef;
+      --c-green-border: #a9e0c9;
+
+      --c-red: #bf3b3b;
+      --c-red-bg: #fcecec;
+      --c-red-border: #f0bcbc;
+
+      --c-amber: #a86a08;
+      --c-amber-bg: #fdf2e0;
+      --c-amber-border: #eecd93;
+
+      --c-purple: #6c4fc4;
+      --c-purple-bg: #f0ecfb;
+
+      --c-slate: #5b6478;
+      --c-slate-bg: #eef0f5;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #10131c;
+        --surface: #171b27;
+        --surface-2: #1c212f;
+        --ink: #e9ecf4;
+        --ink-soft: #c2c9dc;
+        --muted: #8993ac;
+        --muted-soft: #626c85;
+        --border: #2a3142;
+        --border-soft: #212635;
+        --shadow: rgba(0, 0, 0, 0.35);
+
+        --accent: #8098ff;
+        --accent-bg: #1d2547;
+
+        --c-green: #4bd9a0;
+        --c-green-bg: #10281f;
+        --c-green-border: #1f5943;
+
+        --c-red: #ff8f8f;
+        --c-red-bg: #37191a;
+        --c-red-border: #6b2c2c;
+
+        --c-amber: #f0b53f;
+        --c-amber-bg: #362a12;
+        --c-amber-border: #6b4f16;
+
+        --c-purple: #b3a0f2;
+        --c-purple-bg: #241f3f;
+
+        --c-slate: #a7b0c4;
+        --c-slate-bg: #1c2130;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #10131c;
+      --surface: #171b27;
+      --surface-2: #1c212f;
+      --ink: #e9ecf4;
+      --ink-soft: #c2c9dc;
+      --muted: #8993ac;
+      --muted-soft: #626c85;
+      --border: #2a3142;
+      --border-soft: #212635;
+      --shadow: rgba(0, 0, 0, 0.35);
+
+      --accent: #8098ff;
+      --accent-bg: #1d2547;
+
+      --c-green: #4bd9a0;
+      --c-green-bg: #10281f;
+      --c-green-border: #1f5943;
+
+      --c-red: #ff8f8f;
+      --c-red-bg: #37191a;
+      --c-red-border: #6b2c2c;
+
+      --c-amber: #f0b53f;
+      --c-amber-bg: #362a12;
+      --c-amber-border: #6b4f16;
+
+      --c-purple: #b3a0f2;
+      --c-purple-bg: #241f3f;
+
+      --c-slate: #a7b0c4;
+      --c-slate-bg: #1c2130;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+      background: var(--bg);
+      color: var(--ink-soft);
+      line-height: 1.75;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 48px 24px 96px; }
+
+    .source-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-bottom: 28px; font-size: 13px; font-weight: 600;
+      color: var(--accent); text-decoration: none;
+    }
+    .source-link:hover { text-decoration: underline; }
+    .source-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+    .page-header { margin-bottom: 24px; }
+    .eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 10px;
+    }
+    h1 { font-size: 26px; font-weight: 800; color: var(--ink); margin-bottom: 8px; text-wrap: balance; letter-spacing: -0.01em; }
+    .desc { font-size: 13.5px; color: var(--muted); max-width: 62ch; }
+
+    /* 早わかりサマリー */
+    .glance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .glance-tile {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 16px; box-shadow: 0 1px 3px var(--shadow);
+    }
+    .glance-label {
+      font-size: 10.5px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 7px;
+    }
+    .glance-value { font-size: 15px; font-weight: 800; color: var(--ink); line-height: 1.4; }
+    .glance-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    .verdict {
+      font-size: 14px; font-weight: 700; line-height: 1.7;
+      padding: 15px 20px; border-radius: 10px; margin-bottom: 22px;
+      background: var(--c-amber-bg); color: var(--c-amber); border-left: 4px solid var(--c-amber-border);
+    }
+
+    .section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 28px 30px; margin-bottom: 16px;
+      box-shadow: 0 1px 3px var(--shadow);
+    }
+    .section-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
+    .num {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff;
+    }
+    .num-blue   { background: var(--accent); }
+    .num-slate  { background: var(--c-slate); }
+    .num-purple { background: var(--c-purple); }
+    .num-green  { background: var(--c-green); }
+
+    .section-title { font-size: 16.5px; font-weight: 800; color: var(--ink); margin-bottom: 3px; }
+    .section-sub { font-size: 12.5px; color: var(--muted); }
+    .body { margin-left: 48px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* ジャンル比較カード */
+    .genre-compare {
+      border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+    }
+    .genre-compare + .genre-compare { margin-top: 10px; }
+    .genre-compare-head {
+      padding: 9px 14px; background: var(--surface-2); border-bottom: 1px solid var(--border);
+      font-size: 12.5px; font-weight: 700; color: var(--ink);
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .genre-compare-head .tag { font-weight: 500; color: var(--muted); font-size: 11.5px; }
+    .type-row {
+      display: grid; grid-template-columns: 84px 1fr 96px; gap: 12px; align-items: center;
+      padding: 10px 14px; border-top: 1px solid var(--border-soft);
+    }
+    .type-row:first-of-type { border-top: none; }
+    .type-row.win { background: var(--c-green-bg); }
+    .type-row .type-label { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); }
+    .type-row .bar-wrap { display: flex; flex-direction: column; gap: 3px; }
+    .bar-track { position: relative; height: 7px; background: var(--border-soft); border-radius: 4px; overflow: hidden; }
+    .bar-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; background: var(--muted-soft); }
+    .type-row.win .bar-fill { background: var(--c-green); }
+    .bar-caption { font-size: 10.5px; color: var(--muted-soft); }
+    .type-row .metric {
+      text-align: right; font-size: 14px; font-weight: 800; color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+    .type-row.win .metric { color: var(--c-green); }
+    .type-row .metric small { display: block; font-size: 10px; font-weight: 600; color: var(--muted); margin-top: 1px; }
+
+    .insight { border-radius: 8px; padding: 14px 18px; font-size: 13px; line-height: 1.7; }
+    .insight ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+    .insight p + p { margin-top: 6px; }
+    .insight-red    { background: var(--c-red-bg);   border-left: 3px solid var(--c-red); }
+    .insight-blue   { background: var(--accent-bg);  border-left: 3px solid var(--accent); }
+    .insight-yellow { background: var(--c-amber-bg); border-left: 3px solid var(--c-amber); }
+    .insight-title {
+      font-weight: 800; font-size: 14px; color: var(--ink); margin-bottom: 7px;
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+    }
+    .note { font-size: 12px; color: var(--muted-soft); }
+
+    .badge { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 2px 9px; border-radius: 99px; white-space: nowrap; }
+    .badge-green  { background: var(--c-green-bg);  color: var(--c-green); }
+    .badge-yellow { background: var(--c-amber-bg);  color: var(--c-amber); }
+    .badge-gray   { background: var(--c-slate-bg);  color: var(--c-slate); }
+
+    .action-list { list-style: none; display: flex; flex-direction: column; }
+    .action-list li { display: flex; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--border-soft); font-size: 14px; }
+    .action-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .action-list li:first-child { padding-top: 0; }
+    .action-pri {
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+      white-space: nowrap; height: fit-content; margin-top: 1px; flex-shrink: 0;
+    }
+    .pri-highest { background: var(--c-red-bg);   color: var(--c-red); }
+    .pri-high    { background: var(--c-red-bg);   color: var(--c-red); }
+    .pri-mid     { background: var(--c-amber-bg); color: var(--c-amber); }
+    .action-body strong { display: block; font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .action-body span { font-size: 13px; color: var(--muted); }
+
+    p { font-size: 14px; }
+
+    @media (max-width: 600px) {
+      .glance-grid { grid-template-columns: 1fr; }
+      .section { padding: 22px 18px; }
+      .body { margin-left: 0; }
+      .type-row { grid-template-columns: 70px 1fr 78px; gap: 8px; padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <a href="https://plussaitounoa-lgtm.github.io/noa-docs/pu-copy-type-analysis-2026-08-28.html" class="source-link">← 元資料：PU文言タイプ別パフォーマンス分析（2026-08-28）</a>
+
+  <div class="page-header">
+    <div class="eyebrow">仮説メモ — ジャンル別逆転の原因考察</div>
+    <h1>PU文言タイプ別パフォーマンス分析 ― 仮説メモ</h1>
+    <p class="desc">元資料のジャンル別逆転（感情代弁型 vs 疑問形）について、体質・状態への不安仮説と情報探索段階の違い仮説の2つに絞って整理。リーダー確認前の下書き。</p>
+  </div>
+
+  <div class="glance-grid">
+    <div class="glance-tile">
+      <div class="glance-label">医療ダイエット・包茎</div>
+      <div class="glance-value">疑問形が優勢</div>
+      <div class="glance-sub">追加率が感情代弁型を上回る</div>
+    </div>
+    <div class="glance-tile">
+      <div class="glance-label">ピル</div>
+      <div class="glance-value">感情代弁型が優勢</div>
+      <div class="glance-sub">追加率12.0%・全体で最も高い</div>
+    </div>
+    <div class="glance-tile">
+      <div class="glance-label">要注意</div>
+      <div class="glance-value">疑問形は1〜2文言のみ</div>
+      <div class="glance-sub">母数が薄く断定はできない</div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    元資料はジャンル別逆転の原因を明言していない。ここでは仮説①②の2つに絞り、次の検証優先度を整理する。
+  </div>
+
+  <!-- ① 元データの事実整理 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num num-blue">1</div>
+      <div>
+        <div class="section-title">元データの事実整理（再掲）</div>
+        <div class="section-sub">感情代弁型 vs 疑問形・問いかけ型／ジャンル別・直近90日・追加率で比較</div>
+      </div>
+    </div>
+    <div class="body">
+
+      <div class="genre-compare">
+        <div class="genre-compare-head">医療ダイエット <span class="tag">glp1_seo</span></div>
+        <div class="type-row">
+          <div class="type-label">感情代弁型</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:74.6%"></div></div><div class="bar-caption">CTR 14.3%・imp 20,592</div></div>
+          <div class="metric">9.7%<small>追加率</small></div>
+        </div>
+        <div class="type-row win">
+          <div class="type-label">疑問形</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:86.2%"></div></div><div class="bar-caption">CTR 13.1%・imp 2,449</div></div>
+          <div class="metric">11.2%✅<small>追加率</small></div>
+        </div>
+      </div>
+
+      <div class="genre-compare">
+        <div class="genre-compare-head">医療ダイエット <span class="tag">glp1_seo_ava</span></div>
+        <div class="type-row">
+          <div class="type-label">感情代弁型</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:63.8%"></div></div><div class="bar-caption">CTR 14.8%・imp 11,871</div></div>
+          <div class="metric">8.3%<small>追加率</small></div>
+        </div>
+        <div class="type-row win">
+          <div class="type-label">疑問形</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:62.3%"></div></div><div class="bar-caption">CTR 13.7%・imp 541</div></div>
+          <div class="metric">8.1%<small>追加率</small></div>
+        </div>
+      </div>
+
+      <div class="genre-compare">
+        <div class="genre-compare-head">ピル <span class="tag">pill_seo</span></div>
+        <div class="type-row win">
+          <div class="type-label">感情代弁型</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:92.3%"></div></div><div class="bar-caption">CTR 12.9%・imp 5,315</div></div>
+          <div class="metric">12.0%✅<small>追加率</small></div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">疑問形</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:36.2%"></div></div><div class="bar-caption">CTR 11.2%・imp 2,104</div></div>
+          <div class="metric">4.7%<small>追加率</small></div>
+        </div>
+      </div>
+
+      <div class="genre-compare">
+        <div class="genre-compare-head">包茎 <span class="tag">seo_phimo</span></div>
+        <div class="type-row">
+          <div class="type-label">感情代弁型</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:16.2%"></div></div><div class="bar-caption">CTR 11.1%・imp 4,223</div></div>
+          <div class="metric">2.1%<small>追加率</small></div>
+        </div>
+        <div class="type-row win">
+          <div class="type-label">疑問形</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:42.3%"></div></div><div class="bar-caption">CTR 12.4%・imp 1,021</div></div>
+          <div class="metric">5.5%<small>追加率</small></div>
+        </div>
+      </div>
+
+      <div class="genre-compare">
+        <div class="genre-compare-head">FAGA <span class="tag">seo_faga・ほぼ拮抗</span></div>
+        <div class="type-row">
+          <div class="type-label">感情代弁型</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:20.8%"></div></div><div class="bar-caption">CTR 15.1%・imp 2,428</div></div>
+          <div class="metric">2.7%<small>追加率</small></div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">疑問形</div>
+          <div class="bar-wrap"><div class="bar-track"><div class="bar-fill" style="width:24.6%"></div></div><div class="bar-caption">CTR 13.8%・imp 2,290</div></div>
+          <div class="metric">3.2%<small>追加率</small></div>
+        </div>
+      </div>
+
+      <p class="note">緑背景＝そのジャンルで優勢な方。バーは追加率をスケール13%で可視化。疑問形はどのジャンルも1〜2文言のみでの結果。</p>
+    </div>
+  </div>
+
+  <!-- ② データから読み取れる情報 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num num-slate">2</div>
+      <div>
+        <div class="section-title">データから読み取れる情報</div>
+        <div class="section-sub">仮説に入る前に、数値そのものから言えること</div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="insight insight-blue">
+        <ul>
+          <li><strong>優劣がジャンルで逆転している</strong>：医療ダイエット・包茎は疑問形が優勢、ピルは感情代弁型が明確に優勢、FAGAはほぼ拮抗</li>
+          <li><strong>疑問形はどのジャンルも母数が薄い</strong>：541〜2,449imp・1〜2文言のみ。感情代弁型（2,428〜20,592imp）とは規模が一桁近く違う</li>
+          <li><strong>差が出るのはCTRより後の段階</strong>：CTR（表示→クリック）はどのジャンルもほぼ横並び（11〜15%）。型による差は追加率・PVFR（クリック後）で開く</li>
+          <li><strong>ジャンル自体の絶対水準の差が大きい</strong>：ピル感情代弁型の追加率12.0%が全体最高、包茎・FAGAは2〜5%台と低い。型の差より、ジャンルそのものの強さの差の方が大きい可能性がある</li>
+          <li><strong>同じ医療ダイエットでも一枚岩ではない</strong>：glp1_seoとglp1_seo_avaで疑問形の追加率が11.2%と8.1%で差がある</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 仮説①② -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num num-purple">3</div>
+      <div>
+        <div class="section-title">なぜジャンルごとに差が出るのか ― 仮説①②</div>
+        <div class="section-sub">元資料には記載のない、データパターンからの考察</div>
+      </div>
+    </div>
+    <div class="body">
+
+      <div class="insight insight-blue">
+        <div class="insight-title">仮説① 心理的ニーズの違い</div>
+        <p><strong>医療ダイエット・包茎</strong>：自分の体質・状態に合うかという不安が強い → 「食べていいのは何？」「合うのか不安」のような問いかけ調が実際の心理と一致しやすい</p>
+        <p><strong>ピル</strong>：服用への抵抗感・理解してほしい気持ちが強い → 感情に寄り添う代弁型の方が刺さりやすい</p>
+      </div>
+
+      <div class="insight insight-blue">
+        <div class="insight-title">仮説② 情報探索段階の違い</div>
+        <p><strong>ピル</strong>：既に確立された選択肢がある医薬品で、「自分の悩みを分かってほしい」という代弁ニーズが強い層</p>
+        <p><strong>医療ダイエット・包茎</strong>：「そもそも何が正解か分からない」層が多く、問いかけ型が「一緒に考えてくれる」トーンとして刺さりやすい可能性</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ④ 次の検証の優先度 -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num num-green">4</div>
+      <div>
+        <div class="section-title">次の検証の優先度</div>
+        <div class="section-sub">仮説①②を前進させるための具体アクション</div>
+      </div>
+    </div>
+    <div class="body">
+      <ul class="action-list">
+        <li>
+          <span class="action-pri pri-highest">最優先</span>
+          <div class="action-body">
+            <strong>GSCの検索クエリを医療ダイエット・包茎 vs ピルで比較（仮説②の検証）</strong>
+            <span>「〜とは」「初めて」等の初期探索クエリの比率に差があるか確認する。既存データのみで追加配信不要のため、すぐ着手できる</span>
+          </div>
+        </li>
+        <li>
+          <span class="action-pri pri-high">優先</span>
+          <div class="action-body">
+            <strong>医療ダイエット・包茎に「体質・状態への不安」テーマの疑問形バリエーションを追加投入（仮説①の検証）</strong>
+            <span>「〜に合うか不安」「〜な自分でも大丈夫？」系を新規で3〜5パターン投入し、同じテーマでの再現性を見る</span>
+          </div>
+        </li>
+        <li>
+          <span class="action-pri pri-high">優先</span>
+          <div class="action-body">
+            <strong>ピルに「抵抗感・理解してほしい」テーマの感情代弁型バリエーションを追加投入（仮説①の検証）</strong>
+            <span>既存の抽象的な感情代弁型より、テーマを明確に打ち出した文言の方が効果が上がるか比較する</span>
+          </div>
+        </li>
+        <li>
+          <span class="action-pri pri-mid">中</span>
+          <div class="action-body">
+            <strong>PUクリック時点の流入経路（初回訪問か再訪か）をジャンル別に確認（仮説②の補助検証）</strong>
+            <span>医療ダイエット・包茎に新規訪問者が多い傾向があるかを確認する</span>
+          </div>
+        </li>
+      </ul>
+      <p class="note" style="margin-top:4px;">新文言の追加投入（優先の2項目）は配信本数・期間の変更を伴うため、実行前にリーダー確認が必要。</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
